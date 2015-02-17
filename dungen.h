@@ -1,7 +1,14 @@
 #ifndef		DUNGEN_H_
 # define	DUNGEN_H_
 
-# define 		ERROR_DATA_ALLOCATION "Error with memory allocation %s\n"
+# define 		ERROR_DATA_ALLOCATION			"Error with memory allocation %s\n"
+# define		WARN_NO_MORE_ROOM_FOR_FEATURE 	"Unable to place more features in dungeon\n"
+# define		MAX_ROOM_LEN_X		  			8
+# define		MAX_ROOM_LEN_Y					6
+# define		MAX_FEATURE_TRY					999
+# define		MAX_STAIR_TRY					9999
+
+# define 		MAX(a, b) (a > b ? a : b)
 
 typedef enum	e_tile {
 	UNUSED,
@@ -14,7 +21,7 @@ typedef enum	e_tile {
 } 				t_tile;
 
 typedef enum	e_direction {
-	NOTH,
+	NORTH,
 	SOUTH,
 	EAST,
 	WEST
@@ -37,7 +44,6 @@ typedef struct	s_dungeon {
 }				t_dungeon;
 
 typedef struct	s_dungen {
-	int			seed;
 	int			size_x;
 	int 		size_y;
 	int 		max_features;
@@ -45,32 +51,21 @@ typedef struct	s_dungen {
 	int 		corridor_chance;
 
 	t_dungeon	(*generate)(struct s_dungen *this);
-	t_dungeon	(*build_dungeon)(struct s_dungen *this, t_dungeon *dungeon, const int rng);
+	t_dungeon	(*build_dungeon)(struct s_dungen *this, t_dungeon *dungeon);
+	int			(*build_room)(struct s_dungen *this, t_dungeon *dungeon, const int x, const int y,
+							  const t_direction dir);
+	int			(*get_random_int)(struct s_dungen *this, const int min, const int max);
+	t_direction (*get_dir)(struct s_dungen *this);
+	int			(*build_features)(struct s_dungen *this, t_dungeon *dungeon);
+	int			(*build_feature)(struct s_dungen *this, t_dungeon *dungeon, const int x, const int y,
+								 const int xmod, const int ymod, const t_direction direction);
+	int			(*build_corridor)(struct s_dungen *this, t_dungeon *dungeon, const int x, const int y,
+								  const int max_len, t_direction direction);
+	int			(*build_stairs)(struct s_dungen *this, t_dungeon *dungeon, const t_tile tile);
 }				t_dungen;
 
-typedef struct 	s_di_wrapper {
-	t_dungeon	*this;
-	int			x;
-	int			y;
-	t_tile		tile;
-}				t_di_wrapper;
-
-typedef struct 	s_d_wrapper {
-	t_dungen	*this;
-	int			seed;
-	int			x;
-	int			y;
-	int 		features;
-	int			room;
-	int			corridor;
-}				t_d_wrapper;
-
-# define		t_dungeon_init(...) _dungeon_init_wrapper((t_di_wrapper){__VA_ARGS__});
-int				_dungeon_init_wrapper(t_di_wrapper args);
-int			   	_dungeon_init(t_dungeon *this, const int x, const int y, const t_tile tile);
+int			   	t_dungeon_init(t_dungeon *this, const int x, const int y, const t_tile tile);
 void			t_dungeon_destroy(t_dungeon *this);
-# define		t_dungen_init(...) _dungen_init_wrapper((t_d_wrapper){__VA_ARGS__});
-int				_dungen_init_wrapper(t_d_wrapper args);
-int				_dungen_init(t_dungen *this, const int seed, const int x, const int y,
+int				t_dungen_init(t_dungen *this, const int x, const int y,
 							 const int features, const int room, const int corridor);
 #endif		/* !DUNGEN_H_ */
