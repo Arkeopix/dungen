@@ -283,15 +283,15 @@ t_dungeon 	build_dungeon(t_dungen *this, t_dungeon *dung) {
 		fprintf(stderr, "oups");
 }
 
-t_dungeon	generate(t_dungen *this) {
+t_dungeon	*generate(t_dungen *this) {
+	t_dungeon *dung = NULL;
 	if ((this->max_features > 0 && this->max_features <= 100)
 		&& (this->size_x > 3 && this->size_x <= 80)
 		&& (this->size_y > 3 && this->size_y <= 30)) {
-		t_dungeon *dung = NULL;
 		dung = t_dungeon_init(this->size_x, this->size_y, UNUSED);
-		printf("dung contains %d %d %d\n", dung->_size_x, dung->_size_y, dung->_data[1]);
 		this->build_dungeon(this, dung);
 	}
+	return dung;
 }
 
 int		t_dungen_init(t_dungen *this, const int x, const int y,
@@ -318,6 +318,6 @@ int		main(void) {
 	t_dungen dungen;
 
 	t_dungen_init(&dungen, 80, 25, 100, 75, 25);
-	t_dungeon dungeon = dungen.generate(&dungen);
-	/* dungeon.dump(&dungeon); */
+	t_dungeon *dungeon = dungen.generate(&dungen);
+	dungeon->dump(dungeon);
 }

@@ -50,7 +50,7 @@ typedef struct	s_dungen {
 	int 		room_chance;
 	int 		corridor_chance;
 
-	t_dungeon	(*generate)(struct s_dungen *this);
+	t_dungeon	*(*generate)(struct s_dungen *this);
 	t_dungeon	(*build_dungeon)(struct s_dungen *this, t_dungeon *dungeon);
 	int			(*build_room)(struct s_dungen *this, t_dungeon *dungeon, const int x, const int y,
 							  const t_direction dir);
