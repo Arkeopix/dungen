@@ -33,8 +33,6 @@ void 	set_tiles(t_dungeon *this, int startx, int starty, int endx, int endy, t_t
 
 t_tile	get_tile(t_dungeon *this, const int x, const int y) {
 	if (this->x_inbound(this, x) && this->y_inbound(this, y)) {
-		printf("this->[%d] -> %d %d %d %d\n", x + this->_size_x * y, x, y, this->_size_x, this->_size_y);
-		printf("pointer address is %p\n", this->_data);
 		return this->_data[x + this->_size_x * y];
 	}
 	return -1;
@@ -95,25 +93,26 @@ void	dump(t_dungeon *this) {
 	printf("\n");
 }
 
-int		t_dungeon_init(t_dungeon *this, const int x, const int y, const t_tile tile) {
-	this->_size_x = x;
-	this->_size_y = y;
-	this->set_tile = &set_tile;
-	this->set_tiles = &set_tiles;
-	this->get_tile = &get_tile;
-	this->x_inbound = &x_inbound;
-	this->y_inbound = &y_inbound;
-	this->area_used = &area_used;
-	this->adjacent = &adjacent;
-	this->dump = &dump;
-	printf("allocating %d bytes\n", (this->_size_x * this->_size_y));
-	if ((this->_data = malloc((this->_size_x * this->_size_y) * sizeof(int))) == NULL) {
+t_dungeon		*t_dungeon_init(const int x, const int y, const t_tile tile) {
+	t_dungeon	*tmp = NULL;
+
+	if ((tmp = malloc(sizeof(t_dungeon) + sizeof(int) * x * y)) == NULL) {
 		fprintf(stderr, ERROR_DATA_ALLOCATION, strerror(errno));
 		exit(1);
 	}
-	printf("pointer address is %p\n", this->_data);
-	memset(&this->_data, tile, sizeof(this->_data));
-	return 0;
+	memset(&tmp->_data, tile, sizeof(tmp->_data));
+	tmp->_size_x = x;
+	tmp->_size_y = y;
+	tmp->_data = (int*)(tmp+1);
+	tmp->set_tile = &set_tile;
+	tmp->set_tiles = &set_tiles;
+	tmp->get_tile = &get_tile;
+	tmp->x_inbound = &x_inbound;
+	tmp->y_inbound = &y_inbound;
+	tmp->area_used = &area_used;
+	tmp->adjacent = &adjacent;
+	tmp->dump = &dump;
+	return tmp;
 }
 
 void	t_dungeon_destroy(t_dungeon *this) {
@@ -288,9 +287,10 @@ t_dungeon	generate(t_dungen *this) {
 	if ((this->max_features > 0 && this->max_features <= 100)
 		&& (this->size_x > 3 && this->size_x <= 80)
 		&& (this->size_y > 3 && this->size_y <= 30)) {
-		t_dungeon dung;
-		t_dungeon_init(&dung, this->size_x, this->size_y, UNUSED);
-		this->build_dungeon(this, &dung);
+		t_dungeon *dung = NULL;
+		dung = t_dungeon_init(this->size_x, this->size_y, UNUSED);
+		printf("dung contains %d %d %d\n", dung->_size_x, dung->_size_y, dung->_data[1]);
+		this->build_dungeon(this, dung);
 	}
 }
 

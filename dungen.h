@@ -64,7 +64,7 @@ typedef struct	s_dungen {
 	int			(*build_stairs)(struct s_dungen *this, t_dungeon *dungeon, const t_tile tile);
 }				t_dungen;
 
-int			   	t_dungeon_init(t_dungeon *this, const int x, const int y, const t_tile tile);
+t_dungeon	    *t_dungeon_init(const int x, const int y, const t_tile tile);
 void			t_dungeon_destroy(t_dungeon *this);
 int				t_dungen_init(t_dungen *this, const int x, const int y,
 							 const int features, const int room, const int corridor);
