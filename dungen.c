@@ -15,7 +15,7 @@ int		y_inbound(t_dungeon *this, const int y) {
 
 void	set_tile(t_dungeon *this, const int x, const int y, const t_tile tile) {
 	if (this->x_inbound(this, x) && this->y_inbound(this, y)) {
-		this->_data[x * this->_size_x * y] = tile;
+		this->_data[x + this->_size_x * y] = tile;
 	}
 }
 
@@ -44,7 +44,6 @@ int		area_used(t_dungeon *this, const int startx, const int starty, const int en
 		&& (startx <= endx && starty <= endy)) {
 		for (int y = starty; y != endy + 1; y++) {
 			for (int x = startx; x != endx + 1; x++) {
-				printf("pointer address is %p\n", this->_data);
 				if (this->get_tile(this, x, y) != UNUSED)
 					return 0;
 			}
@@ -104,7 +103,7 @@ t_dungeon		*t_dungeon_init(const int x, const int y, const t_tile tile) {
 	memset(&tmp->_data, tile, x * y * sizeof(int));
 	tmp->_size_x = x;
 	tmp->_size_y = y;
-	tmp->_data = (int*)(tmp+1);
+	tmp->_data = (int*)(tmp);
 	tmp->set_tile = &set_tile;
 	tmp->set_tiles = &set_tiles;
 	tmp->get_tile = &get_tile;
@@ -125,7 +124,7 @@ static int		get_random_int(const int min, const int max) {
 	return rng >= min ? rng : min;
 }
 
-int		build_room(t_dungen *this, t_dungeon *dungeon, const int x, const int y,
+int		build_room(t_dungeon *dungeon, const int x, const int y,
 				   const t_direction dir) {
 	int	len_x = get_random_int(4, MAX_ROOM_LEN_X);
 	int	len_y = get_random_int(4, MAX_ROOM_LEN_Y);
@@ -204,7 +203,7 @@ int 	build_feature(t_dungen *this, t_dungeon *dungeon, int x, int y, int xmod, i
 	int chance = get_random_int(0, 100);
 	
 	if (chance <= this->room_chance) {
-		if (this->build_room(this, dungeon, x + xmod, y + ymod, direction)) {
+		if (this->build_room(dungeon, x + xmod, y + ymod, direction)) {
 			dungeon->set_tile(dungeon, x, y, DOOR);
 			dungeon->set_tile(dungeon, x + xmod, y + ymod, FLOOR);			
 			return 1;
@@ -270,7 +269,7 @@ int			build_stairs(t_dungen *this, t_dungeon *dungeon, const t_tile tile) {
 }
 
 void 	build_dungeon(t_dungen *this, t_dungeon *dung) {
-	this->build_room(this, dung, this->size_x / 2, this->size_y / 2, get_dir());
+	this->build_room(dung, this->size_x / 2, this->size_y / 2, get_dir());
 	for (int features = 1; features != this->max_features; features++) {
 		if (!this->build_features(this, dung)) {
 			fprintf(stderr, WARN_NO_MORE_ROOM_FOR_FEATURE);
@@ -290,7 +289,6 @@ t_dungeon	*generate(t_dungen *this) {
 		&& (this->size_x > 3 && this->size_x <= 80)
 		&& (this->size_y > 3 && this->size_y <= 30)) {
 		dung = t_dungeon_init(this->size_x, this->size_y, UNUSED);
-		printf("freshly build pointer address is %p\n", dung->_data);
 		this->build_dungeon(this, dung);
 	}
 	return dung;

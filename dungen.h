@@ -52,7 +52,7 @@ typedef struct	s_dungen {
 
 	t_dungeon	*(*generate)(struct s_dungen *this);
 	void		(*build_dungeon)(struct s_dungen *this, t_dungeon *dungeon);
-	int			(*build_room)(struct s_dungen *this, t_dungeon *dungeon, const int x, const int y,
+	int			(*build_room)(t_dungeon *dungeon, const int x, const int y,
 							  const t_direction dir);
 	int			(*build_features)(struct s_dungen *this, t_dungeon *dungeon);
 	int			(*build_feature)(struct s_dungen *this, t_dungeon *dungeon, const int x, const int y,
