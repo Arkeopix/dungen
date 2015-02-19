@@ -72,37 +72,54 @@ int adjacent(t_dungeon * this, const int x, const int y, const t_tile tile)
 	return -1;
 }
 
-void dump(t_dungeon * this)
+static FILE * get_stream(const char *s) {
+	if (strcmp(s, "stdout") == 0) {
+		return stdout;
+	}
+	else {
+		FILE * stream;
+		if ((stream = fopen(s, "w")) != NULL) {
+			return stream;
+		}
+	}
+	fprintf(stderr, ERROR_FOPEN, strerror(errno));
+	return NULL;
+}
+
+void dump(t_dungeon * this, const char * out)
 {
+	FILE * stream = get_stream(out);
+	
 	for (int y = 0; y != this->_size_y; y++) {
 		for (int x = 0; x != this->_size_x; x++) {
 			switch (this->get_tile(this, x, y)) {
 			case UNUSED:
-				printf(" ");
+				fprintf(stream, " ");
 				break;
 			case WALL:
-				printf("#");
+				fprintf(stream, "#");
 				break;
 			case FLOOR:
-				printf(".");
+				fprintf(stream, ".");
 				break;
 			case CORRIDOR:
-				printf(".");
+				fprintf(stream, ".");
 				break;
 			case DOOR:
-				printf("+");
+				fprintf(stream, "+");
 				break;
 			case IN:
-				printf("<");
+				fprintf(stream, "<");
 				break;
 			case OUT:
-				printf(">");
+				fprintf(stream, ">");
 				break;
 			}
 		}
-		printf("\n");
+		fprintf(stream, "\n");
 	}
-	printf("\n");
+	fprintf(stream, "\n");
+	fclose(stream);
 }
 
 t_dungeon *t_dungeon_init(const int x, const int y, const t_tile tile)
@@ -316,9 +333,9 @@ void build_dungeon(t_dungen * this, t_dungeon * dung)
 	}
 
 	if (!this->build_stairs(this, dung, OUT))
-		fprintf(stderr, "oups");
+		fprintf(stderr, "mo more room for stairs");
 	if (!this->build_stairs(this, dung, IN))
-		fprintf(stderr, "oups");
+		fprintf(stderr, "no more room for stairs");
 }
 
 t_dungeon *generate(t_dungen * this)
@@ -358,6 +375,7 @@ int main(void)
 
 	t_dungen_init(&dungen, 80, 25, 100, 75, 25);
 	t_dungeon *dungeon = dungen.generate(&dungen);
-	dungeon->dump(dungeon);
+	dungeon->dump(dungeon, "stdout");
 	t_dungeon_destroy(dungeon);
+	return 0;
 }

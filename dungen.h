@@ -2,6 +2,7 @@
 #define		DUNGEN_H_
 
 #define    	ERROR_DATA_ALLOCATION			"Error with memory allocation %s\n"
+#define		ERROR_FOPEN						"Could not open file: %s\n"
 #define		WARN_NO_MORE_ROOM_FOR_FEATURE 	"Unable to place more features in dungeon\n"
 #define		MAX_ROOM_LEN_X		  			8
 #define		MAX_ROOM_LEN_Y					6
@@ -37,14 +38,14 @@ typedef struct s_dungeon {
 	void (*set_tiles) (struct s_dungeon * this, const int startx,
 			   const int starty, const int endx, const int endy,
 			   t_tile tile);
-	 t_tile(*get_tile) (struct s_dungeon * this, const int x, const int y);
+	t_tile(*get_tile) (struct s_dungeon * this, const int x, const int y);
 	int (*x_inbound) (struct s_dungeon * this, const int x);
 	int (*y_inbound) (struct s_dungeon * this, const int y);
 	int (*area_used) (struct s_dungeon * this, const int startx,
 			  const int starty, const int endx, const int endy);
 	int (*adjacent) (struct s_dungeon * this, const int x, const int y,
 			 const t_tile tile);
-	void (*dump) (struct s_dungeon * this);
+	void (*dump) (struct s_dungeon * this, const char * out);
 } t_dungeon;
 
 typedef struct s_dungen {
