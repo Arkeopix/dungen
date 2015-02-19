@@ -119,7 +119,8 @@ void dump(t_dungeon * this, const char * out)
 		fprintf(stream, "\n");
 	}
 	fprintf(stream, "\n");
-	fclose(stream);
+	if (strcmp(out, "stdout") != 0)
+		fclose(stream);
 }
 
 t_dungeon *t_dungeon_init(const int x, const int y, const t_tile tile)
