@@ -51,11 +51,9 @@ typedef struct	s_dungen {
 	int 		corridor_chance;
 
 	t_dungeon	*(*generate)(struct s_dungen *this);
-	t_dungeon	(*build_dungeon)(struct s_dungen *this, t_dungeon *dungeon);
+	void		(*build_dungeon)(struct s_dungen *this, t_dungeon *dungeon);
 	int			(*build_room)(struct s_dungen *this, t_dungeon *dungeon, const int x, const int y,
 							  const t_direction dir);
-	int			(*get_random_int)(struct s_dungen *this, const int min, const int max);
-	t_direction (*get_dir)(struct s_dungen *this);
 	int			(*build_features)(struct s_dungen *this, t_dungeon *dungeon);
 	int			(*build_feature)(struct s_dungen *this, t_dungeon *dungeon, const int x, const int y,
 								 const int xmod, const int ymod, const t_direction direction);
