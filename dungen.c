@@ -103,7 +103,7 @@ t_dungeon		*t_dungeon_init(const int x, const int y, const t_tile tile) {
 	memset(&tmp->_data, tile, x * y * sizeof(int));
 	tmp->_size_x = x;
 	tmp->_size_y = y;
-	tmp->_data = (int*)(tmp);
+	tmp->_data = (int*)(tmp+1);
 	tmp->set_tile = &set_tile;
 	tmp->set_tiles = &set_tiles;
 	tmp->get_tile = &get_tile;
